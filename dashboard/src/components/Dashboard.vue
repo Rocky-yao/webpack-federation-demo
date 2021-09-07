@@ -1,22 +1,27 @@
 <template>
-  <div>this is {{name}}{{li}}.</div>
+  <div>
+    <h3>Main App</h3>
+    <!-- <Button /> -->
+    <hr />
+  </div>
 </template>
-<script>
 
+<script>
+import { defineAsyncComponent } from "vue";
 export default {
-  props: {
-    name: {
-      type: String,
-      default: 'default value',
-    }
+  components: {
+    // Button: defineAsyncComponent(() => import("core/Button")),
   },
-  data () {
+  setup () {
+    async function app3 () {
+      let { obj } = await import('mume/MumeApp')
+      console.log(obj)
+    }
+    app3()
     return {
-      li: '1'
-    }
+      app3
+    };
   },
-  mounted () {
-    console.log(this.name)
-  }
-}
+
+};
 </script>

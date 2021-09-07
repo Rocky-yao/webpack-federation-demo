@@ -1,26 +1,30 @@
-  import React, { Component } from 'react';
-
-class MyReact extends Component {
+import React from 'react';
+import BoilingVerdict from './changeState.jsx';
+class MyReact extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      name: 'myreact.jsx',
-      type: 'react',
-    };
+    this.handleChange = this.handleChange.bind(this);
+    this.state = { temperature: '' };
   }
-  changeName() {
-    this.setState({
-      name: 'other react',
-    });
+
+  handleChange(e) {
+    this.setState({ temperature: e.target.value });
+  }
+  BoilingVerdict(props) {
+    if (props >= 100) {
+      return <p>The water would boil.</p>;
+    }
+    return <p>The water would not boil.</p>;
   }
   render() {
+    const temperature = this.state.temperature;
     return (
-      <div>
-        <h3>this is {this.state.name}</h3>
-        <div>{this.state.type}</div>
-        <div> {this.props.prop}</div>
-        <button onClick={this.changeName.bind(this)}>change name</button>
-      </div>
+      <fieldset>
+        <legend>Enter temperature in Celsius:</legend>
+        <input value={temperature} onChange={this.handleChange} />
+        {/* <BoilingVerdict celsius={parseFloat(temperature)} /> */}
+        {this.BoilingVerdict(temperature)}
+      </fieldset>
     );
   }
 }

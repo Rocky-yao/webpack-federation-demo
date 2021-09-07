@@ -5,7 +5,8 @@ const packageJSON = require('./package.json');
 module.exports = {
   mode: 'development',
   output: {
-    publicPath: './',
+    publicPath: 'http://localhost:8082/',
+    filename: '[name].[contentHash].js',
   },
   devServer: {
     port: 8082,
@@ -29,16 +30,11 @@ module.exports = {
   plugins: [
     new ModuleFederationPlugin({
       name: 'auth',
-      filename: 'remoteEntry.js',
-      exposes: {
-        './AuthApp': './src/bootstrap.js',
-      },
       remotes: {
-        dashboard: 'dashboard@http://localhost:8083/remoteEntry.js',
-        mume:"mume@http://localhost:9090/remoteEntry.js",
-        app3:"app3@http://localhost:9090/app3RemoteEntry.js"
+        // dashboard: 'dashboard@http://localhost:8083/remoteEntry.js',
+        mume: 'mume@http://localhost:9090/remoteEntry.js',
+        // app3: 'app3@http://localhost:9090/app3RemoteEntry.js',
       },
-      shared: packageJSON.dependencies,
     }),
     new HtmlWebpackPlugin({
       template: './public/index.html',

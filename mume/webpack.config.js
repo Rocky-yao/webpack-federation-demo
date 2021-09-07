@@ -1,5 +1,5 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin")
-const { VueLoaderPlugin } = require("vue-loader")
+const { VueLoaderPlugin } = require('vue-loader');
 const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin")
 const packageJson = require("./package.json")
 
@@ -7,8 +7,10 @@ module.exports = {
   mode: "development",
   entry: "./src/index.js",
   output: {
-    publicPath: "./",
-    filename: "[name].[contentHash].js"
+    publicPath: "http://localhost:9090/",
+    filename: '[name].[chunkhash].js',
+    chunkFilename: '[name].[contenthash].js',
+
   },
   resolve: {
     extensions: [".js", ".vue"]
@@ -18,6 +20,27 @@ module.exports = {
     historyApiFallback: true,
     headers: {
       "Access-Control-Allow-Origin": "*"
+    }
+  },
+  optimization: {
+    splitChunks: {
+      cacheGroups: {
+        commons: {
+          chunks: "all",
+          minChunks: 2,
+          maxInitialRequests: 5, // The default limit is too small to showcase the effect
+          minSize: 0,// This is example is too small to create commons chunks
+          test: /[\\/]node_modules[\\/]/,
+          name (module, chunks, cacheGroupKey) {
+            const moduleFileName = module
+              .identifier()
+              .split('/')
+              .reduceRight((item) => item);
+            const allChunksNames = chunks.map((item) => item.name).join('~');
+            return `${cacheGroupKey}-${allChunksNames}-${moduleFileName}`;
+          },
+        }
+      }
     }
   },
   module: {
@@ -56,18 +79,24 @@ module.exports = {
       name: "mume",
       filename: "remoteEntry.js",
       exposes: {
-        "./MumeApp": "./src/bootstrap"
+        "./MumeApp": "./src/app3"
       },
-      shared: packageJson.dependencies
-    }),
-    new ModuleFederationPlugin({
-      name: "app3",
-      filename: "app3RemoteEntry.js",
-      exposes: {
-        "./app3": "./src/app3"
+      remotes: {
+        // core: 'core@http://localhost:9000/remoteEntry.js'
       },
-      shared: packageJson.dependencies
+      shared: {
+        ...packageJson.dependencies,
+        vue: {
+          singleton: true,
+          requiredVersion: packageJson.dependencies["vue"],
+        },
+        vuex: {
+          singleton: true,
+          requiredVersion: packageJson.dependencies["vuex"],
+        }
+      }
     }),
+
     new HtmlWebpackPlugin({
       template: "./public/index.html"
     }),

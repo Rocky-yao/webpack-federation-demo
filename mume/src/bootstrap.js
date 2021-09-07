@@ -1,19 +1,14 @@
 import Vue from 'vue';
 import mume from './components/mune.vue';
-function mount(el,name) {
-  new Vue({
-    render: h =>
-      h(mume, {
-        props: {
-          name: name,
-        },
-      }),
-  }).$mount(el);
-}
-
-if (process.env.NODE_ENV === 'development') {
-  const el = document.querySelector('#dev-mume');
-  el && mount(el);
-}
-
-export { mount };
+import store from './store/index'
+// import app from "core/store"
+// console.log(app)
+// store.registerModule('app',app.app)
+// store.registerModule('app2',app.app2)
+import debounce from "./components/debounce"
+Vue.directive('debounce', debounce)
+new Vue({
+  store,
+  render: h =>
+    h(mume),
+}).$mount('#dev-mume');

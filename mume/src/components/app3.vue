@@ -4,9 +4,13 @@
   </div>
 </template>
 <script>
+// import { Dashboard } from "vue3/DashboardApp"
 export default {
   data () {
     return {}
+  },
+  components: {
+    // Dashboard
   },
   props: {
     name: {
@@ -14,8 +18,7 @@ export default {
       default: "app3"
     }
   },
-  mounted(){
-    console.log(this.name)
+  mounted () {
   }
 }
 </script>

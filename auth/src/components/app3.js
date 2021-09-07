@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { obj } from 'app3/app3';
+import { obj } from 'app3/MumeApp';
 import { useHistory } from 'react-router-dom';
 
 export default function MumeApp() {

@@ -1,24 +1,24 @@
-const HtmlWebpackPlugin = require("html-webpack-plugin")
-const { VueLoaderPlugin } = require("vue-loader")
-const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin")
-const packageJson = require("./package.json")
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { VueLoaderPlugin } = require('vue-loader');
+const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
+const packageJson = require('./package.json');
 
 module.exports = {
-  mode: "development",
-  entry: "./src/index.js",
+  mode: 'development',
+  entry: './src/index.js',
   output: {
-    publicPath: "./",
-    filename: "[name].[contentHash].js"
+    publicPath: 'http://localhost:8083/',
+    filename: '[name].[contentHash].js',
   },
   resolve: {
-    extensions: [".js", ".vue"]
+    extensions: ['.js', '.vue'],
   },
   devServer: {
     port: 8083,
     historyApiFallback: true,
     headers: {
-      "Access-Control-Allow-Origin": "*"
-    }
+      'Access-Control-Allow-Origin': '*',
+    },
   },
   module: {
     rules: [
@@ -26,43 +26,48 @@ module.exports = {
         test: /\.(png|jpe?g|gif|woff|svg|eot|ttf)$/i,
         use: [
           {
-            loader: "file-loader"
-          }
-        ]
+            loader: 'file-loader',
+          },
+        ],
       },
       {
         test: /\.vue$/,
-        use: "vue-loader"
+        use: 'vue-loader',
       },
       {
         test: /\.scss|\.css$/,
-        use: ["vue-style-loader", "style-loader", "css-loader", "sass-loader"]
+        use: ['vue-style-loader', 'style-loader', 'css-loader', 'sass-loader'],
       },
       {
         test: /\.js$/,
         exclude: /node_modules/,
         use: {
-          loader: "babel-loader",
+          loader: 'babel-loader',
           options: {
-            presets: ["@babel/preset-env"],
-            plugins: ["@babel/plugin-transform-runtime"]
-          }
-        }
-      }
-    ]
+            presets: ['@babel/preset-env'],
+            plugins: ['@babel/plugin-transform-runtime'],
+          },
+        },
+      },
+    ],
   },
   plugins: [
     new ModuleFederationPlugin({
-      name: "dashboard",
-      filename: "remoteEntry.js",
+      name: 'dashboard',
+      filename: 'remoteEntry.js',
       exposes: {
-        "./DashboardApp": "./src/bootstrap" // 把整个项目通过dashboard这个别名暴露除去
+        './DashboardApp': './src/index', // 把整个项目通过dashboard这个别名暴露除去
+        "./Button": "./src/components/Button",
       },
-      shared: packageJson.dependencies
+      remotes: {
+        mume: 'mume@http://localhost:9090/remoteEntry.js', 
+        core: "core@http://localhost:9000/remoteEntry.js",
+      },
+      shared: packageJson.dependencies,
     }),
     new HtmlWebpackPlugin({
-      template: "./public/index.html"
+      template: './public/index.html',
     }),
-    new VueLoaderPlugin()
-  ]
-}
+    new VueLoaderPlugin(),
+  ],
+};

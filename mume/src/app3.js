@@ -16,5 +16,7 @@
 // }
 
 // export { mount };
-import obj from './components/test';
-export { obj };
+const obj = { a: 1 }
+export {
+  obj
+}
